@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.11
- * (c) 2014-2019 Evan You
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -5655,22 +5655,21 @@
   var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 
   /*  */
-
   /**
    * Query an element selector if it's not an element already.
    */
-  function query (el) {
+  function query(el) {
     if (typeof el === 'string') {
       var selected = document.querySelector(el);
       if (!selected) {
         warn(
           'Cannot find element: ' + el
         );
-        return document.createElement('div')
+        return document.createElement('div');
       }
-      return selected
+      return selected;
     } else {
-      return el
+      return el;
     }
   }
 
@@ -7649,7 +7648,7 @@
         // skip the update if old and new VDOM state is the same.
         // `value` is handled separately because the DOM value may be temporarily
         // out of sync with VDOM state due to focus, composition and modifiers.
-        // This  #4521 by skipping the unnecesarry `checked` update.
+        // This  #4521 by skipping the unnecessary `checked` update.
         cur !== oldProps[key]
       ) {
         // some property updates can throw
@@ -9087,6 +9086,7 @@
     text,
     delimiters
   ) {
+    // 下面4行是判断属性值中是否有插值语法
     var tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE;
     if (!tagRE.test(text)) {
       return
@@ -9244,7 +9244,6 @@
   /**
    * Not type-checking this file because it's mostly vendor code.
    */
-
   // Regular Expressions for parsing tags and attributes
   var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
   var dynamicArgAttribute = /^\s*((?:v-[\w-]+:|@|:|#)\[[^=]+\][^\s"'<>\/=]*)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/;
@@ -9257,11 +9256,9 @@
   // #7298: escape - to avoid being passed as HTML comment when inlined in page
   var comment = /^<!\--/;
   var conditionalComment = /^<!\[/;
-
   // Special Elements (can contain anything)
   var isPlainTextElement = makeMap('script,style,textarea', true);
   var reCache = {};
-
   var decodingMap = {
     '&lt;': '<',
     '&gt;': '>',
@@ -9269,21 +9266,20 @@
     '&amp;': '&',
     '&#10;': '\n',
     '&#9;': '\t',
-    '&#39;': "'"
+    '&#39;': '\'',
   };
   var encodedAttr = /&(?:lt|gt|quot|amp|#39);/g;
   var encodedAttrWithNewLines = /&(?:lt|gt|quot|amp|#39|#10|#9);/g;
-
   // #5992
   var isIgnoreNewlineTag = makeMap('pre,textarea', true);
-  var shouldIgnoreFirstNewline = function (tag, html) { return tag && isIgnoreNewlineTag(tag) && html[0] === '\n'; };
-
-  function decodeAttr (value, shouldDecodeNewlines) {
+  var shouldIgnoreFirstNewline = function (tag, html) { return tag && isIgnoreNewlineTag(
+    tag) && html[0] === '\n'; };
+  function decodeAttr(value, shouldDecodeNewlines) {
     var re = shouldDecodeNewlines ? encodedAttrWithNewLines : encodedAttr;
-    return value.replace(re, function (match) { return decodingMap[match]; })
+    return value.replace(re, function (match) { return decodingMap[match]; });
   }
-
-  function parseHTML (html, options) {
+  function parseHTML(html, options) {
+    debugger;
     var stack = [];
     var expectHTML = options.expectHTML;
     var isUnaryTag$$1 = options.isUnaryTag || no;
@@ -9299,42 +9295,37 @@
           // Comment:
           if (comment.test(html)) {
             var commentEnd = html.indexOf('-->');
-
             if (commentEnd >= 0) {
               if (options.shouldKeepComment) {
-                options.comment(html.substring(4, commentEnd), index, index + commentEnd + 3);
+                options.comment(
+                  html.substring(4, commentEnd), index, index + commentEnd + 3);
               }
               advance(commentEnd + 3);
-              continue
+              continue;
             }
           }
-
           // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
           if (conditionalComment.test(html)) {
             var conditionalEnd = html.indexOf(']>');
-
             if (conditionalEnd >= 0) {
               advance(conditionalEnd + 2);
-              continue
+              continue;
             }
           }
-
           // Doctype:
           var doctypeMatch = html.match(doctype);
           if (doctypeMatch) {
             advance(doctypeMatch[0].length);
-            continue
+            continue;
           }
-
           // End tag:
           var endTagMatch = html.match(endTag);
           if (endTagMatch) {
             var curIndex = index;
             advance(endTagMatch[0].length);
             parseEndTag(endTagMatch[1], curIndex, index);
-            continue
+            continue;
           }
-
           // Start tag:
           var startTagMatch = parseStartTag();
           if (startTagMatch) {
@@ -9342,10 +9333,9 @@
             if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
               advance(1);
             }
-            continue
+            continue;
           }
         }
-
         var text = (void 0), rest = (void 0), next = (void 0);
         if (textEnd >= 0) {
           rest = html.slice(textEnd);
@@ -9354,31 +9344,31 @@
             !startTagOpen.test(rest) &&
             !comment.test(rest) &&
             !conditionalComment.test(rest)
-          ) {
+            ) {
             // < in plain text, be forgiving and treat it as text
             next = rest.indexOf('<', 1);
-            if (next < 0) { break }
+            if (next < 0) {
+              break;
+            }
             textEnd += next;
             rest = html.slice(textEnd);
           }
           text = html.substring(0, textEnd);
         }
-
         if (textEnd < 0) {
           text = html;
         }
-
         if (text) {
           advance(text.length);
         }
-
         if (options.chars && text) {
           options.chars(text, index - text.length, index);
         }
       } else {
         var endTagLength = 0;
         var stackedTag = lastTag.toLowerCase();
-        var reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'));
+        var reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp(
+          '([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'));
         var rest$1 = html.replace(reStackedTag, function (all, text, endTag) {
           endTagLength = endTag.length;
           if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
@@ -9392,41 +9382,41 @@
           if (options.chars) {
             options.chars(text);
           }
-          return ''
+          return '';
         });
         index += html.length - rest$1.length;
         html = rest$1;
         parseEndTag(stackedTag, index - endTagLength, index);
       }
-
       if (html === last) {
         options.chars && options.chars(html);
         if (!stack.length && options.warn) {
-          options.warn(("Mal-formatted tag at end of template: \"" + html + "\""), { start: index + html.length });
+          options.warn(
+            ("Mal-formatted tag at end of template: \"" + html + "\""),
+            { start: index + html.length }
+          );
         }
-        break
+        break;
       }
     }
-
     // Clean up any remaining tags
     parseEndTag();
-
-    function advance (n) {
+    function advance(n) {
       index += n;
       html = html.substring(n);
     }
-
-    function parseStartTag () {
+    function parseStartTag() {
       var start = html.match(startTagOpen);
       if (start) {
         var match = {
           tagName: start[1],
           attrs: [],
-          start: index
+          start: index,
         };
         advance(start[0].length);
         var end, attr;
-        while (!(end = html.match(startTagClose)) && (attr = html.match(dynamicArgAttribute) || html.match(attribute))) {
+        while (!(end = html.match(startTagClose)) && (attr = html.match(
+          dynamicArgAttribute) || html.match(attribute))) {
           attr.start = index;
           advance(attr[0].length);
           attr.end = index;
@@ -9436,15 +9426,13 @@
           match.unarySlash = end[1];
           advance(end[0].length);
           match.end = index;
-          return match
+          return match;
         }
       }
     }
-
-    function handleStartTag (match) {
+    function handleStartTag(match) {
       var tagName = match.tagName;
       var unarySlash = match.unarySlash;
-
       if (expectHTML) {
         if (lastTag === 'p' && isNonPhrasingTag(tagName)) {
           parseEndTag(lastTag);
@@ -9453,55 +9441,60 @@
           parseEndTag(tagName);
         }
       }
-
       var unary = isUnaryTag$$1(tagName) || !!unarySlash;
-
       var l = match.attrs.length;
       var attrs = new Array(l);
       for (var i = 0; i < l; i++) {
         var args = match.attrs[i];
+        // todo 这里为什么要取4,5
         var value = args[3] || args[4] || args[5] || '';
+        // 这里为什么要单独处理a标签
         var shouldDecodeNewlines = tagName === 'a' && args[1] === 'href'
           ? options.shouldDecodeNewlinesForHref
           : options.shouldDecodeNewlines;
         attrs[i] = {
           name: args[1],
-          value: decodeAttr(value, shouldDecodeNewlines)
+          value: decodeAttr(value, shouldDecodeNewlines),
         };
         if (options.outputSourceRange) {
           attrs[i].start = args.start + args[0].match(/^\s*/).length;
           attrs[i].end = args.end;
         }
       }
-
       if (!unary) {
-        stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs, start: match.start, end: match.end });
+        stack.push({
+          tag: tagName,
+          lowerCasedTag: tagName.toLowerCase(),
+          attrs: attrs,
+          start: match.start,
+          end: match.end,
+        });
         lastTag = tagName;
       }
-
       if (options.start) {
         options.start(tagName, attrs, unary, match.start, match.end);
       }
     }
-
-    function parseEndTag (tagName, start, end) {
+    function parseEndTag(tagName, start, end) {
       var pos, lowerCasedTagName;
-      if (start == null) { start = index; }
-      if (end == null) { end = index; }
-
+      if (start == null) {
+        start = index;
+      }
+      if (end == null) {
+        end = index;
+      }
       // Find the closest opened tag of the same type
       if (tagName) {
         lowerCasedTagName = tagName.toLowerCase();
         for (pos = stack.length - 1; pos >= 0; pos--) {
           if (stack[pos].lowerCasedTag === lowerCasedTagName) {
-            break
+            break;
           }
         }
       } else {
         // If no tag name is provided, clean shop
         pos = 0;
       }
-
       if (pos >= 0) {
         // Close all the open elements, up the stack
         for (var i = stack.length - 1; i >= pos; i--) {
@@ -9517,7 +9510,6 @@
             options.end(stack[i].tag, start, end);
           }
         }
-
         // Remove the open elements from the stack
         stack.length = pos;
         lastTag = pos && stack[pos - 1].tag;
@@ -9544,22 +9536,15 @@
   var forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
   var stripParensRE = /^\(|\)$/g;
   var dynamicArgRE = /^\[.*\]$/;
-
   var argRE = /:(.*)$/;
   var bindRE = /^:|^\.|^v-bind:/;
   var modifierRE = /\.[^.\]]+(?=[^\]]*$)/g;
-
   var slotRE = /^v-slot(:|$)|^#/;
-
   var lineBreakRE = /[\r\n]/;
   var whitespaceRE$1 = /\s+/g;
-
   var invalidAttributeRE = /[\s"'<>\/=]/;
-
   var decodeHTMLCached = cached(he.decode);
-
   var emptySlotScopeToken = "_empty_";
-
   // configurable state
   var warn$2;
   var delimiters;
@@ -9570,8 +9555,7 @@
   var platformMustUseProp;
   var platformGetTagNamespace;
   var maybeComponent;
-
-  function createASTElement (
+  function createASTElement(
     tag,
     attrs,
     parent
@@ -9583,31 +9567,26 @@
       attrsMap: makeAttrsMap(attrs),
       rawAttrsMap: {},
       parent: parent,
-      children: []
-    }
+      children: [],
+    };
   }
-
   /**
    * Convert HTML string to AST.
    */
-  function parse (
+  function parse(
     template,
     options
   ) {
     warn$2 = options.warn || baseWarn;
-
     platformIsPreTag = options.isPreTag || no;
     platformMustUseProp = options.mustUseProp || no;
     platformGetTagNamespace = options.getTagNamespace || no;
     var isReservedTag = options.isReservedTag || no;
     maybeComponent = function (el) { return !!el.component || !isReservedTag(el.tag); };
-
     transforms = pluckModuleFunction(options.modules, 'transformNode');
     preTransforms = pluckModuleFunction(options.modules, 'preTransformNode');
     postTransforms = pluckModuleFunction(options.modules, 'postTransformNode');
-
     delimiters = options.delimiters;
-
     var stack = [];
     var preserveWhitespace = options.preserveWhitespace !== false;
     var whitespaceOption = options.whitespace;
@@ -9616,15 +9595,14 @@
     var inVPre = false;
     var inPre = false;
     var warned = false;
-
-    function warnOnce (msg, range) {
+    function warnOnce(msg, range) {
       if (!warned) {
         warned = true;
         warn$2(msg, range);
       }
     }
-
-    function closeElement (element) {
+    function closeElement(element) {
+      // 只有有子节点时才生效
       trimEndingWhitespace(element);
       if (!inVPre && !element.processed) {
         element = processElement(element, options);
@@ -9638,7 +9616,7 @@
           }
           addIfCondition(root, {
             exp: element.elseif,
-            block: element
+            block: element,
           });
         } else {
           warnOnce(
@@ -9664,13 +9642,11 @@
           element.parent = currentParent;
         }
       }
-
       // final children cleanup
       // filter out scoped slots
       element.children = element.children.filter(function (c) { return !(c).slotScope; });
       // remove trailing whitespace node again
       trimEndingWhitespace(element);
-
       // check pre state
       if (element.pre) {
         inVPre = false;
@@ -9683,8 +9659,7 @@
         postTransforms[i](element, options);
       }
     }
-
-    function trimEndingWhitespace (el) {
+    function trimEndingWhitespace(el) {
       // remove trailing whitespace node
       if (!inPre) {
         var lastNode;
@@ -9692,13 +9667,12 @@
           (lastNode = el.children[el.children.length - 1]) &&
           lastNode.type === 3 &&
           lastNode.text === ' '
-        ) {
+          ) {
           el.children.pop();
         }
       }
     }
-
-    function checkRootConstraints (el) {
+    function checkRootConstraints(el) {
       if (el.tag === 'slot' || el.tag === 'template') {
         warnOnce(
           "Cannot use <" + (el.tag) + "> as component root element because it may " +
@@ -9714,7 +9688,6 @@
         );
       }
     }
-
     parseHTML(template, {
       warn: warn$2,
       expectHTML: options.expectHTML,
@@ -9724,29 +9697,28 @@
       shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
       shouldKeepComment: options.comments,
       outputSourceRange: options.outputSourceRange,
-      start: function start (tag, attrs, unary, start$1, end) {
+      start: function start(tag, attrs, unary, start$1, end) {
         // check namespace.
         // inherit parent ns if there is one
-        var ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag);
-
+        var ns = (currentParent && currentParent.ns) || platformGetTagNamespace(
+          tag);
         // handle IE svg bug
         /* istanbul ignore if */
         if (isIE && ns === 'svg') {
           attrs = guardIESVGBug(attrs);
         }
-
         var element = createASTElement(tag, attrs, currentParent);
         if (ns) {
           element.ns = ns;
         }
-
+        // todo,为什么dev后,dist中的代码木有下面这一行if
         {
           if (options.outputSourceRange) {
             element.start = start$1;
             element.end = end;
             element.rawAttrsMap = element.attrsList.reduce(function (cumulated, attr) {
               cumulated[attr.name] = attr;
-              return cumulated
+              return cumulated;
             }, {});
           }
           attrs.forEach(function (attr) {
@@ -9756,13 +9728,13 @@
                 "spaces, quotes, <, >, / or =.",
                 {
                   start: attr.start + attr.name.indexOf("["),
-                  end: attr.start + attr.name.length
+                  end: attr.start + attr.name.length,
                 }
               );
             }
           });
         }
-
+        // 排除style,script标签,可以忽略
         if (isForbiddenTag(element) && !isServerRendering()) {
           element.forbidden = true;
           warn$2(
@@ -9772,18 +9744,19 @@
             { start: element.start }
           );
         }
-
         // apply pre-transforms
+        // todo 这个preTransforms的目的是干什么
         for (var i = 0; i < preTransforms.length; i++) {
           element = preTransforms[i](element, options) || element;
         }
-
+        // 判断是否有v-pre属性
         if (!inVPre) {
           processPre(element);
           if (element.pre) {
             inVPre = true;
           }
         }
+        // 是否是pre标签
         if (platformIsPreTag(element.tag)) {
           inPre = true;
         }
@@ -9795,14 +9768,12 @@
           processIf(element);
           processOnce(element);
         }
-
         if (!root) {
           root = element;
           {
             checkRootConstraints(root);
           }
         }
-
         if (!unary) {
           currentParent = element;
           stack.push(element);
@@ -9810,8 +9781,7 @@
           closeElement(element);
         }
       },
-
-      end: function end (tag, start, end$1) {
+      end: function end(tag, start, end$1) {
         var element = stack[stack.length - 1];
         // pop stack
         stack.length -= 1;
@@ -9821,8 +9791,7 @@
         }
         closeElement(element);
       },
-
-      chars: function chars (text, start, end) {
+      chars: function chars(text, start, end) {
         if (!currentParent) {
           {
             if (text === template) {
@@ -9837,7 +9806,7 @@
               );
             }
           }
-          return
+          return;
         }
         // IE textarea placeholder bug
         /* istanbul ignore if */
@@ -9845,7 +9814,7 @@
           currentParent.tag === 'textarea' &&
           currentParent.attrsMap.placeholder === text
         ) {
-          return
+          return;
         }
         var children = currentParent.children;
         if (inPre || text.trim()) {
@@ -9876,12 +9845,12 @@
               type: 2,
               expression: res.expression,
               tokens: res.tokens,
-              text: text
+              text: text,
             };
           } else if (text !== ' ' || !children.length || children[children.length - 1].text !== ' ') {
             child = {
               type: 3,
-              text: text
+              text: text,
             };
           }
           if (child) {
@@ -9893,14 +9862,14 @@
           }
         }
       },
-      comment: function comment (text, start, end) {
+      comment: function comment(text, start, end) {
         // adding anyting as a sibling to the root node is forbidden
         // comments should still be allowed, but ignored
         if (currentParent) {
           var child = {
             type: 3,
             text: text,
-            isComment: true
+            isComment: true,
           };
           if (options.outputSourceRange) {
             child.start = start;
@@ -9908,18 +9877,17 @@
           }
           currentParent.children.push(child);
         }
-      }
+      },
     });
-    return root
+    return root;
   }
-
-  function processPre (el) {
+  function processPre(el) {
+    // https://cn.vuejs.org/v2/api/#v-pre
     if (getAndRemoveAttr(el, 'v-pre') != null) {
       el.pre = true;
     }
   }
-
-  function processRawAttrs (el) {
+  function processRawAttrs(el) {
     var list = el.attrsList;
     var len = list.length;
     if (len) {
@@ -9927,7 +9895,7 @@
       for (var i = 0; i < len; i++) {
         attrs[i] = {
           name: list[i].name,
-          value: JSON.stringify(list[i].value)
+          value: JSON.stringify(list[i].value),
         };
         if (list[i].start != null) {
           attrs[i].start = list[i].start;
@@ -9939,13 +9907,11 @@
       el.plain = true;
     }
   }
-
-  function processElement (
+  function processElement(
     element,
     options
   ) {
     processKey(element);
-
     // determine whether this is a plain element after
     // removing structural attributes
     element.plain = (
@@ -9953,19 +9919,18 @@
       !element.scopedSlots &&
       !element.attrsList.length
     );
-
     processRef(element);
     processSlotContent(element);
     processSlotOutlet(element);
     processComponent(element);
+    // 处理静态和动态class|style
     for (var i = 0; i < transforms.length; i++) {
       element = transforms[i](element, options) || element;
     }
     processAttrs(element);
-    return element
+    return element;
   }
-
-  function processKey (el) {
+  function processKey(el) {
     var exp = getBindingAttr(el, 'key');
     if (exp) {
       {
@@ -9991,16 +9956,14 @@
       el.key = exp;
     }
   }
-
-  function processRef (el) {
+  function processRef(el) {
     var ref = getBindingAttr(el, 'ref');
     if (ref) {
       el.ref = ref;
       el.refInFor = checkInFor(el);
     }
   }
-
-  function processFor (el) {
+  function processFor(el) {
     var exp;
     if ((exp = getAndRemoveAttr(el, 'v-for'))) {
       var res = parseFor(exp);
@@ -10015,11 +9978,11 @@
     }
   }
 
-
-
-  function parseFor (exp) {
+  function parseFor(exp) {
     var inMatch = exp.match(forAliasRE);
-    if (!inMatch) { return }
+    if (!inMatch) {
+      return;
+    }
     var res = {};
     res.for = inMatch[2].trim();
     var alias = inMatch[1].trim().replace(stripParensRE, '');
@@ -10033,16 +9996,15 @@
     } else {
       res.alias = alias;
     }
-    return res
+    return res;
   }
-
-  function processIf (el) {
+  function processIf(el) {
     var exp = getAndRemoveAttr(el, 'v-if');
     if (exp) {
       el.if = exp;
       addIfCondition(el, {
         exp: exp,
-        block: el
+        block: el,
       });
     } else {
       if (getAndRemoveAttr(el, 'v-else') != null) {
@@ -10054,13 +10016,12 @@
       }
     }
   }
-
-  function processIfConditions (el, parent) {
+  function processIfConditions(el, parent) {
     var prev = findPrevElement(parent.children);
     if (prev && prev.if) {
       addIfCondition(prev, {
         exp: el.elseif,
-        block: el
+        block: el,
       });
     } else {
       warn$2(
@@ -10070,12 +10031,11 @@
       );
     }
   }
-
-  function findPrevElement (children) {
+  function findPrevElement(children) {
     var i = children.length;
     while (i--) {
       if (children[i].type === 1) {
-        return children[i]
+        return children[i];
       } else {
         if (children[i].text !== ' ') {
           warn$2(
@@ -10088,24 +10048,21 @@
       }
     }
   }
-
-  function addIfCondition (el, condition) {
+  function addIfCondition(el, condition) {
     if (!el.ifConditions) {
       el.ifConditions = [];
     }
     el.ifConditions.push(condition);
   }
-
-  function processOnce (el) {
+  function processOnce(el) {
     var once$$1 = getAndRemoveAttr(el, 'v-once');
     if (once$$1 != null) {
       el.once = true;
     }
   }
-
   // handle content being passed to a component as slot,
   // e.g. <template slot="xxx">, <div slot-scope="xxx">
-  function processSlotContent (el) {
+  function processSlotContent(el) {
     var slotScope;
     if (el.tag === 'template') {
       slotScope = getAndRemoveAttr(el, 'scope');
@@ -10134,7 +10091,6 @@
       }
       el.slotScope = slotScope;
     }
-
     // slot="xxx"
     var slotTarget = getBindingAttr(el, 'slot');
     if (slotTarget) {
@@ -10146,7 +10102,6 @@
         addAttr(el, 'slot', slotTarget, getRawBindingAttr(el, 'slot'));
       }
     }
-
     // 2.6 v-slot syntax
     {
       if (el.tag === 'template') {
@@ -10173,7 +10128,10 @@
           var dynamic = ref.dynamic;
           el.slotTarget = name;
           el.slotTargetDynamic = dynamic;
-          el.slotScope = slotBinding.value || emptySlotScopeToken; // force it into a scoped slot for perf
+          el.slotScope = slotBinding.value || emptySlotScopeToken; // force it
+                                                                  // into a
+                                                                  // scoped slot
+                                                                  // for perf
         }
       } else {
         // v-slot on component, denotes default slot
@@ -10211,7 +10169,7 @@
           slotContainer.children = el.children.filter(function (c) {
             if (!c.slotScope) {
               c.parent = slotContainer;
-              return true
+              return true;
             }
           });
           slotContainer.slotScope = slotBinding$1.value || emptySlotScopeToken;
@@ -10223,8 +10181,7 @@
       }
     }
   }
-
-  function getSlotName (binding) {
+  function getSlotName(binding) {
     var name = binding.name.replace(slotRE, '');
     if (!name) {
       if (binding.name[0] !== '#') {
@@ -10240,11 +10197,10 @@
       // dynamic [name]
       ? { name: name.slice(1, -1), dynamic: true }
       // static name
-      : { name: ("\"" + name + "\""), dynamic: false }
+      : { name: ("\"" + name + "\""), dynamic: false };
   }
-
   // handle <slot/> outlets
-  function processSlotOutlet (el) {
+  function processSlotOutlet(el) {
     if (el.tag === 'slot') {
       el.slotName = getBindingAttr(el, 'name');
       if (el.key) {
@@ -10257,8 +10213,7 @@
       }
     }
   }
-
-  function processComponent (el) {
+  function processComponent(el) {
     var binding;
     if ((binding = getBindingAttr(el, 'is'))) {
       el.component = binding;
@@ -10267,8 +10222,7 @@
       el.inlineTemplate = true;
     }
   }
-
-  function processAttrs (el) {
+  function processAttrs(el) {
     var list = el.attrsList;
     var i, l, name, rawName, value, modifiers, syncGen, isDynamic;
     for (i = 0, l = list.length; i < l; i++) {
@@ -10300,7 +10254,9 @@
           if (modifiers) {
             if (modifiers.prop && !isDynamic) {
               name = camelize(name);
-              if (name === 'innerHtml') { name = 'innerHTML'; }
+              if (name === 'innerHtml') {
+                name = 'innerHTML';
+              }
             }
             if (modifiers.camel && !isDynamic) {
               name = camelize(name);
@@ -10370,7 +10326,8 @@
               isDynamic = true;
             }
           }
-          addDirective(el, name, rawName, value, arg, isDynamic, modifiers, list[i]);
+          addDirective(
+            el, name, rawName, value, arg, isDynamic, modifiers, list[i]);
           if (name === 'model') {
             checkForAliasModel(el, value);
           }
@@ -10393,35 +10350,32 @@
         // #6887 firefox doesn't update muted state if set via attribute
         // even immediately after element creation
         if (!el.component &&
-            name === 'muted' &&
-            platformMustUseProp(el.tag, el.attrsMap.type, name)) {
+          name === 'muted' &&
+          platformMustUseProp(el.tag, el.attrsMap.type, name)) {
           addProp(el, name, 'true', list[i]);
         }
       }
     }
   }
-
-  function checkInFor (el) {
+  function checkInFor(el) {
     var parent = el;
     while (parent) {
       if (parent.for !== undefined) {
-        return true
+        return true;
       }
       parent = parent.parent;
     }
-    return false
+    return false;
   }
-
-  function parseModifiers (name) {
+  function parseModifiers(name) {
     var match = name.match(modifierRE);
     if (match) {
       var ret = {};
       match.forEach(function (m) { ret[m.slice(1)] = true; });
-      return ret
+      return ret;
     }
   }
-
-  function makeAttrsMap (attrs) {
+  function makeAttrsMap(attrs) {
     var map = {};
     for (var i = 0, l = attrs.length; i < l; i++) {
       if (
@@ -10431,29 +10385,25 @@
       }
       map[attrs[i].name] = attrs[i].value;
     }
-    return map
+    return map;
   }
-
   // for script (e.g. type="x/template") or style, do not decode content
-  function isTextTag (el) {
-    return el.tag === 'script' || el.tag === 'style'
+  function isTextTag(el) {
+    return el.tag === 'script' || el.tag === 'style';
   }
-
-  function isForbiddenTag (el) {
+  function isForbiddenTag(el) {
     return (
       el.tag === 'style' ||
       (el.tag === 'script' && (
         !el.attrsMap.type ||
         el.attrsMap.type === 'text/javascript'
       ))
-    )
+    );
   }
-
   var ieNSBug = /^xmlns:NS\d+/;
   var ieNSPrefix = /^NS\d+:/;
-
   /* istanbul ignore next */
-  function guardIESVGBug (attrs) {
+  function guardIESVGBug(attrs) {
     var res = [];
     for (var i = 0; i < attrs.length; i++) {
       var attr = attrs[i];
@@ -10462,10 +10412,9 @@
         res.push(attr);
       }
     }
-    return res
+    return res;
   }
-
-  function checkForAliasModel (el, value) {
+  function checkForAliasModel(el, value) {
     var _el = el;
     while (_el) {
       if (_el.for && _el.alias === value) {
@@ -10918,50 +10867,49 @@
 
 
 
-  var CodegenState = function CodegenState (options) {
+  var CodegenState = function CodegenState(options) {
     this.options = options;
     this.warn = options.warn || baseWarn;
     this.transforms = pluckModuleFunction(options.modules, 'transformCode');
     this.dataGenFns = pluckModuleFunction(options.modules, 'genData');
     this.directives = extend(extend({}, baseDirectives), options.directives);
     var isReservedTag = options.isReservedTag || no;
-    this.maybeComponent = function (el) { return !!el.component || !isReservedTag(el.tag); };
+    this.maybeComponent = function (el) { return !!el.component || !isReservedTag(
+      el.tag); };
     this.onceId = 0;
     this.staticRenderFns = [];
     this.pre = false;
   };
 
 
-
-  function generate (
+  function generate(
     ast,
     options
   ) {
+    debugger;
     var state = new CodegenState(options);
     var code = ast ? genElement(ast, state) : '_c("div")';
     return {
       render: ("with(this){return " + code + "}"),
-      staticRenderFns: state.staticRenderFns
-    }
+      staticRenderFns: state.staticRenderFns,
+    };
   }
-
-  function genElement (el, state) {
+  function genElement(el, state) {
     if (el.parent) {
       el.pre = el.pre || el.parent.pre;
     }
-
     if (el.staticRoot && !el.staticProcessed) {
-      return genStatic(el, state)
+      return genStatic(el, state);
     } else if (el.once && !el.onceProcessed) {
-      return genOnce(el, state)
+      return genOnce(el, state);
     } else if (el.for && !el.forProcessed) {
-      return genFor(el, state)
+      return genFor(el, state);
     } else if (el.if && !el.ifProcessed) {
-      return genIf(el, state)
+      return genIf(el, state);
     } else if (el.tag === 'template' && !el.slotTarget && !state.pre) {
-      return genChildren(el, state) || 'void 0'
+      return genChildren(el, state) || 'void 0';
     } else if (el.tag === 'slot') {
-      return genSlot(el, state)
+      return genSlot(el, state);
     } else {
       // component or element
       var code;
@@ -10972,7 +10920,6 @@
         if (!el.plain || (el.pre && state.maybeComponent(el))) {
           data = genData$2(el, state);
         }
-
         var children = el.inlineTemplate ? null : genChildren(el, state, true);
         code = "_c('" + (el.tag) + "'" + (data ? ("," + data) : '') + (children ? ("," + children) : '') + ")";
       }
@@ -10980,12 +10927,11 @@
       for (var i = 0; i < state.transforms.length; i++) {
         code = state.transforms[i](el, code);
       }
-      return code
+      return code;
     }
   }
-
   // hoist static sub-trees out
-  function genStatic (el, state) {
+  function genStatic(el, state) {
     el.staticProcessed = true;
     // Some elements (templates) need to behave differently inside of a v-pre
     // node.  All pre nodes are static roots, so we can use this as a location to
@@ -10996,21 +10942,20 @@
     }
     state.staticRenderFns.push(("with(this){return " + (genElement(el, state)) + "}"));
     state.pre = originalPreState;
-    return ("_m(" + (state.staticRenderFns.length - 1) + (el.staticInFor ? ',true' : '') + ")")
+    return ("_m(" + (state.staticRenderFns.length - 1) + (el.staticInFor ? ',true' : '') + ")");
   }
-
   // v-once
-  function genOnce (el, state) {
+  function genOnce(el, state) {
     el.onceProcessed = true;
     if (el.if && !el.ifProcessed) {
-      return genIf(el, state)
+      return genIf(el, state);
     } else if (el.staticInFor) {
       var key = '';
       var parent = el.parent;
       while (parent) {
         if (parent.for) {
           key = parent.key;
-          break
+          break;
         }
         parent = parent.parent;
       }
@@ -11019,52 +10964,47 @@
           "v-once can only be used inside v-for that is keyed. ",
           el.rawAttrsMap['v-once']
         );
-        return genElement(el, state)
+        return genElement(el, state);
       }
-      return ("_o(" + (genElement(el, state)) + "," + (state.onceId++) + "," + key + ")")
+      return ("_o(" + (genElement(el, state)) + "," + (state.onceId++) + "," + key + ")");
     } else {
-      return genStatic(el, state)
+      return genStatic(el, state);
     }
   }
-
-  function genIf (
+  function genIf(
     el,
     state,
     altGen,
     altEmpty
   ) {
     el.ifProcessed = true; // avoid recursion
-    return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty)
+    return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty);
   }
-
-  function genIfConditions (
+  function genIfConditions(
     conditions,
     state,
     altGen,
     altEmpty
   ) {
     if (!conditions.length) {
-      return altEmpty || '_e()'
+      return altEmpty || '_e()';
     }
-
     var condition = conditions.shift();
     if (condition.exp) {
-      return ("(" + (condition.exp) + ")?" + (genTernaryExp(condition.block)) + ":" + (genIfConditions(conditions, state, altGen, altEmpty)))
+      return ("(" + (condition.exp) + ")?" + (genTernaryExp(condition.block)) + ":" + (genIfConditions(conditions, state, altGen, altEmpty)));
     } else {
-      return ("" + (genTernaryExp(condition.block)))
+      return ("" + (genTernaryExp(condition.block)));
     }
-
     // v-if with v-once should generate code like (a)?_m(0):_m(1)
-    function genTernaryExp (el) {
+    function genTernaryExp(el) {
       return altGen
         ? altGen(el, state)
         : el.once
           ? genOnce(el, state)
-          : genElement(el, state)
+          : genElement(el, state);
     }
   }
-
-  function genFor (
+  function genFor(
     el,
     state,
     altGen,
@@ -11074,7 +11014,6 @@
     var alias = el.alias;
     var iterator1 = el.iterator1 ? ("," + (el.iterator1)) : '';
     var iterator2 = el.iterator2 ? ("," + (el.iterator2)) : '';
-
     if (state.maybeComponent(el) &&
       el.tag !== 'slot' &&
       el.tag !== 'template' &&
@@ -11088,22 +11027,20 @@
         true /* tip */
       );
     }
-
     el.forProcessed = true; // avoid recursion
     return (altHelper || '_l') + "((" + exp + ")," +
       "function(" + alias + iterator1 + iterator2 + "){" +
-        "return " + ((altGen || genElement)(el, state)) +
-      '})'
+      "return " + ((altGen || genElement)(el, state)) +
+      '})';
   }
-
-  function genData$2 (el, state) {
+  function genData$2(el, state) {
     var data = '{';
-
     // directives first.
     // directives may mutate the el's other properties before they are generated.
     var dirs = genDirectives(el, state);
-    if (dirs) { data += dirs + ','; }
-
+    if (dirs) {
+      data += dirs + ',';
+    }
     // key
     if (el.key) {
       data += "key:" + (el.key) + ",";
@@ -11177,12 +11114,13 @@
     if (el.wrapListeners) {
       data = el.wrapListeners(data);
     }
-    return data
+    return data;
   }
-
-  function genDirectives (el, state) {
+  function genDirectives(el, state) {
     var dirs = el.directives;
-    if (!dirs) { return }
+    if (!dirs) {
+      return;
+    }
     var res = 'directives:[';
     var hasRuntime = false;
     var i, l, dir, needRuntime;
@@ -11197,15 +11135,15 @@
       }
       if (needRuntime) {
         hasRuntime = true;
-        res += "{name:\"" + (dir.name) + "\",rawName:\"" + (dir.rawName) + "\"" + (dir.value ? (",value:(" + (dir.value) + "),expression:" + (JSON.stringify(dir.value))) : '') + (dir.arg ? (",arg:" + (dir.isDynamicArg ? dir.arg : ("\"" + (dir.arg) + "\""))) : '') + (dir.modifiers ? (",modifiers:" + (JSON.stringify(dir.modifiers))) : '') + "},";
+        res += "{name:\"" + (dir.name) + "\",rawName:\"" + (dir.rawName) + "\"" + (dir.value ? (",value:(" + (dir.value) + "),expression:" + (JSON.stringify(
+            dir.value))) : '') + (dir.arg ? (",arg:" + (dir.isDynamicArg ? dir.arg : ("\"" + (dir.arg) + "\""))) : '') + (dir.modifiers ? (",modifiers:" + (JSON.stringify(dir.modifiers))) : '') + "},";
       }
     }
     if (hasRuntime) {
-      return res.slice(0, -1) + ']'
+      return res.slice(0, -1) + ']';
     }
   }
-
-  function genInlineTemplate (el, state) {
+  function genInlineTemplate(el, state) {
     var ast = el.children[0];
     if (el.children.length !== 1 || ast.type !== 1) {
       state.warn(
@@ -11215,11 +11153,11 @@
     }
     if (ast && ast.type === 1) {
       var inlineRenderFns = generate(ast, state.options);
-      return ("inlineTemplate:{render:function(){" + (inlineRenderFns.render) + "},staticRenderFns:[" + (inlineRenderFns.staticRenderFns.map(function (code) { return ("function(){" + code + "}"); }).join(',')) + "]}")
+      return ("inlineTemplate:{render:function(){" + (inlineRenderFns.render) + "},staticRenderFns:[" + (inlineRenderFns.staticRenderFns.map(function (code) { return ("function(){" + code + "}"); }).join(
+          ',')) + "]}");
     }
   }
-
-  function genScopedSlots (
+  function genScopedSlots(
     el,
     slots,
     state
@@ -11227,23 +11165,23 @@
     // by default scoped slots are considered "stable", this allows child
     // components with only scoped slots to skip forced updates from parent.
     // but in some cases we have to bail-out of this optimization
-    // for example if the slot contains dynamic names, has v-if or v-for on them...
+    // for example if the slot contains dynamic names, has v-if or v-for on
+    // them...
     var needsForceUpdate = el.for || Object.keys(slots).some(function (key) {
       var slot = slots[key];
       return (
         slot.slotTargetDynamic ||
         slot.if ||
         slot.for ||
-        containsSlotChild(slot) // is passing down slot from parent which may be dynamic
-      )
+        containsSlotChild(slot) // is passing down slot from parent which may be
+                                // dynamic
+      );
     });
-
     // #9534: if a component with scoped slots is inside a conditional branch,
     // it's possible for the same component to be reused but with different
     // compiled slot content. To avoid that, we generate a unique key based on
     // the generated code of all the slot contents.
     var needsKey = !!el.if;
-
     // OR when it is inside another scoped slot or v-for (the reactivity may be
     // disconnected due to the intermediate scope variable)
     // #9438, #9506
@@ -11257,7 +11195,7 @@
           parent.for
         ) {
           needsForceUpdate = true;
-          break
+          break;
         }
         if (parent.if) {
           needsKey = true;
@@ -11265,43 +11203,38 @@
         parent = parent.parent;
       }
     }
-
     var generatedSlots = Object.keys(slots)
       .map(function (key) { return genScopedSlot(slots[key], state); })
       .join(',');
-
-    return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "") + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")")
+    return ("scopedSlots:_u([" + generatedSlots + "]" + (needsForceUpdate ? ",null,true" : "") + (!needsForceUpdate && needsKey ? (",null,false," + (hash(generatedSlots))) : "") + ")");
   }
-
   function hash(str) {
     var hash = 5381;
     var i = str.length;
-    while(i) {
+    while (i) {
       hash = (hash * 33) ^ str.charCodeAt(--i);
     }
-    return hash >>> 0
+    return hash >>> 0;
   }
-
-  function containsSlotChild (el) {
+  function containsSlotChild(el) {
     if (el.type === 1) {
       if (el.tag === 'slot') {
-        return true
+        return true;
       }
-      return el.children.some(containsSlotChild)
+      return el.children.some(containsSlotChild);
     }
-    return false
+    return false;
   }
-
-  function genScopedSlot (
+  function genScopedSlot(
     el,
     state
   ) {
     var isLegacySyntax = el.attrsMap['slot-scope'];
     if (el.if && !el.ifProcessed && !isLegacySyntax) {
-      return genIf(el, state, genScopedSlot, "null")
+      return genIf(el, state, genScopedSlot, "null");
     }
     if (el.for && !el.forProcessed) {
-      return genFor(el, state, genScopedSlot)
+      return genFor(el, state, genScopedSlot);
     }
     var slotScope = el.slotScope === emptySlotScopeToken
       ? ""
@@ -11314,10 +11247,9 @@
         : genElement(el, state)) + "}";
     // reverse proxy v-slot without scope on this.$slots
     var reverseProxy = slotScope ? "" : ",proxy:true";
-    return ("{key:" + (el.slotTarget || "\"default\"") + ",fn:" + fn + reverseProxy + "}")
+    return ("{key:" + (el.slotTarget || "\"default\"") + ",fn:" + fn + reverseProxy + "}");
   }
-
-  function genChildren (
+  function genChildren(
     el,
     state,
     checkSkip,
@@ -11336,21 +11268,20 @@
         var normalizationType = checkSkip
           ? state.maybeComponent(el$1) ? ",1" : ",0"
           : "";
-        return ("" + ((altGenElement || genElement)(el$1, state)) + normalizationType)
+        return ("" + ((altGenElement || genElement)(el$1, state)) + normalizationType);
       }
       var normalizationType$1 = checkSkip
         ? getNormalizationType(children, state.maybeComponent)
         : 0;
       var gen = altGenNode || genNode;
-      return ("[" + (children.map(function (c) { return gen(c, state); }).join(',')) + "]" + (normalizationType$1 ? ("," + normalizationType$1) : ''))
+      return ("[" + (children.map(function (c) { return gen(c, state); }).join(',')) + "]" + (normalizationType$1 ? ("," + normalizationType$1) : ''));
     }
   }
-
   // determine the normalization needed for the children array.
   // 0: no normalization needed
   // 1: simple normalization needed (possible 1-level deep nested array)
   // 2: full normalization needed
-  function getNormalizationType (
+  function getNormalizationType(
     children,
     maybeComponent
   ) {
@@ -11358,56 +11289,52 @@
     for (var i = 0; i < children.length; i++) {
       var el = children[i];
       if (el.type !== 1) {
-        continue
+        continue;
       }
       if (needsNormalization(el) ||
-          (el.ifConditions && el.ifConditions.some(function (c) { return needsNormalization(c.block); }))) {
+        (el.ifConditions && el.ifConditions.some(
+          function (c) { return needsNormalization(c.block); }))) {
         res = 2;
-        break
+        break;
       }
       if (maybeComponent(el) ||
-          (el.ifConditions && el.ifConditions.some(function (c) { return maybeComponent(c.block); }))) {
+        (el.ifConditions && el.ifConditions.some(function (c) { return maybeComponent(c.block); }))) {
         res = 1;
       }
     }
-    return res
+    return res;
   }
-
-  function needsNormalization (el) {
-    return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
+  function needsNormalization(el) {
+    return el.for !== undefined || el.tag === 'template' || el.tag === 'slot';
   }
-
-  function genNode (node, state) {
+  function genNode(node, state) {
     if (node.type === 1) {
-      return genElement(node, state)
+      return genElement(node, state);
     } else if (node.type === 3 && node.isComment) {
-      return genComment(node)
+      return genComment(node);
     } else {
-      return genText(node)
+      return genText(node);
     }
   }
-
-  function genText (text) {
+  function genText(text) {
     return ("_v(" + (text.type === 2
       ? text.expression // no need for () because already wrapped in _s()
-      : transformSpecialNewlines(JSON.stringify(text.text))) + ")")
+      : transformSpecialNewlines(JSON.stringify(text.text))) + ")");
   }
-
-  function genComment (comment) {
-    return ("_e(" + (JSON.stringify(comment.text)) + ")")
+  function genComment(comment) {
+    return ("_e(" + (JSON.stringify(comment.text)) + ")");
   }
-
-  function genSlot (el, state) {
+  function genSlot(el, state) {
     var slotName = el.slotName || '"default"';
     var children = genChildren(el, state);
     var res = "_t(" + slotName + (children ? ("," + children) : '');
     var attrs = el.attrs || el.dynamicAttrs
       ? genProps((el.attrs || []).concat(el.dynamicAttrs || []).map(function (attr) { return ({
-          // slot props are camelized
-          name: camelize(attr.name),
-          value: attr.value,
-          dynamic: attr.dynamic
-        }); }))
+        // slot props are camelized
+        name: camelize(attr.name),
+        value: attr.value,
+        dynamic: attr.dynamic,
+      }); }))
       : null;
     var bind$$1 = el.attrsMap['v-bind'];
     if ((attrs || bind$$1) && !children) {
@@ -11419,20 +11346,19 @@
     if (bind$$1) {
       res += (attrs ? '' : ',null') + "," + bind$$1;
     }
-    return res + ')'
+    return res + ')';
   }
-
-  // componentName is el.component, take it as argument to shun flow's pessimistic refinement
-  function genComponent (
+  // componentName is el.component, take it as argument to shun flow's
+  // pessimistic refinement
+  function genComponent(
     componentName,
     el,
     state
   ) {
     var children = el.inlineTemplate ? null : genChildren(el, state, true);
-    return ("_c(" + componentName + "," + (genData$2(el, state)) + (children ? ("," + children) : '') + ")")
+    return ("_c(" + componentName + "," + (genData$2(el, state)) + (children ? ("," + children) : '') + ")");
   }
-
-  function genProps (props) {
+  function genProps(props) {
     var staticProps = "";
     var dynamicProps = "";
     for (var i = 0; i < props.length; i++) {
@@ -11446,14 +11372,14 @@
     }
     staticProps = "{" + (staticProps.slice(0, -1)) + "}";
     if (dynamicProps) {
-      return ("_d(" + staticProps + ",[" + (dynamicProps.slice(0, -1)) + "])")
+      return ("_d(" + staticProps + ",[" + (dynamicProps.slice(0, -1)) + "])");
     } else {
-      return staticProps
+      return staticProps;
     }
   }
-
   // #3895, #4268
-  function transformSpecialNewlines (text) {
+  function transformSpecialNewlines(text) {
+    // u2028 行分隔符 u2029 段分隔符
     return text
       .replace(/\u2028/g, '\\u2028')
       .replace(/\u2029/g, '\\u2029')
@@ -11826,11 +11752,10 @@
   }
 
   /*  */
-
   // `createCompilerCreator` allows creating compilers that use alternative
   // parser/optimizer/codegen, e.g the SSR optimizing compiler.
   // Here we just export a default compiler using the default parts.
-  var createCompiler = createCompilerCreator(function baseCompile (
+  var createCompiler = createCompilerCreator(function baseCompile(
     template,
     options
   ) {
@@ -11842,8 +11767,8 @@
     return {
       ast: ast,
       render: code.render,
-      staticRenderFns: code.staticRenderFns
-    }
+      staticRenderFns: code.staticRenderFns,
+    };
   });
 
   /*  */

@@ -21,6 +21,7 @@ export function parseText (
   text: string,
   delimiters?: [string, string]
 ): TextParseResult | void {
+  // 下面4行是判断属性值中是否有插值语法
   const tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE
   if (!tagRE.test(text)) {
     return
