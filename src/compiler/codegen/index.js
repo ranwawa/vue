@@ -50,6 +50,7 @@ export function generate(
     staticRenderFns: state.staticRenderFns,
   };
 }
+
 export function genElement(el: ASTElement, state: CodegenState): string {
   if (el.parent) {
     el.pre = el.pre || el.parent.pre;
@@ -90,6 +91,7 @@ export function genElement(el: ASTElement, state: CodegenState): string {
     return code;
   }
 }
+
 // hoist static sub-trees out
 function genStatic(el: ASTElement, state: CodegenState): string {
   el.staticProcessed = true;
@@ -291,6 +293,7 @@ export function genData(el: ASTElement, state: CodegenState): string {
   }
   return data;
 }
+
 function genDirectives(el: ASTElement, state: CodegenState): string | void {
   const dirs = el.directives;
   if (!dirs) {
@@ -576,6 +579,7 @@ function genProps(props: Array<ASTAttr>): string {
     return staticProps;
   }
 }
+
 /* istanbul ignore next */
 function generateValue(value) {
   if (typeof value === 'string') {
@@ -585,7 +589,7 @@ function generateValue(value) {
 }
 // #3895, #4268
 function transformSpecialNewlines(text: string): string {
-  // u2028 行分隔符 u2029 段分隔符
+  // u2028 行分隔符 u2029
   return text
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')

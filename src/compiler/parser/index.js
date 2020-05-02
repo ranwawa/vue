@@ -191,27 +191,7 @@ export function parse(
       }
       // todo,为什么dev后,dist中的代码木有下面这一行if
       if (process.env.NODE_ENV !== 'production') {
-        if (options.outputSourceRange) {
-          element.start = start;
-          element.end = end;
-          element.rawAttrsMap = element.attrsList.reduce((cumulated, attr) => {
-            cumulated[attr.name] = attr;
-            return cumulated;
-          }, {});
-        }
-        attrs.forEach(attr => {
-          if (invalidAttributeRE.test(attr.name)) {
-            warn(
-              `Invalid dynamic argument expression: attribute names cannot contain ` +
-              `spaces, quotes, <, >, / or =.`,
-              {
-                start: attr.start + attr.name.indexOf(`[`),
-                end: attr.start + attr.name.length,
-              },
-            );
-          }
-        });
-      }
+     }
       // 排除style,script标签,可以忽略
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
@@ -402,6 +382,7 @@ export function processElement(
   processAttrs(element);
   return element;
 }
+
 function processKey(el) {
   const exp = getBindingAttr(el, 'key');
   if (exp) {
@@ -834,6 +815,7 @@ function processAttrs(el) {
     }
   }
 }
+
 function checkInFor(el: ASTElement): boolean {
   let parent = el;
   while (parent) {
