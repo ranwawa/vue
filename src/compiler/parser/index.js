@@ -103,20 +103,10 @@ export function parse(
     if (!stack.length && element !== root) {
       // allow root elements with v-if, v-else-if and v-else
       if (root.if && (element.elseif || element.else)) {
-        if (process.env.NODE_ENV !== 'production') {
-          checkRootConstraints(element);
-        }
         addIfCondition(root, {
           exp: element.elseif,
           block: element,
         });
-      } else if (process.env.NODE_ENV !== 'production') {
-        warnOnce(
-          `Component template should contain exactly one root element. ` +
-          `If you are using v-if on multiple elements, ` +
-          `use v-else-if to chain them instead.`,
-          { start: element.start },
-        );
       }
     }
     if (currentParent && !element.forbidden) {
@@ -180,6 +170,7 @@ export function parse(
       );
     }
   }
+
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -194,11 +185,6 @@ export function parse(
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(
         tag);
-      // handle IE svg bug
-      /* istanbul ignore if */
-      if (isIE && ns === 'svg') {
-        attrs = guardIESVGBug(attrs);
-      }
       let element: ASTElement = createASTElement(tag, attrs, currentParent);
       if (ns) {
         element.ns = ns;
@@ -229,12 +215,6 @@ export function parse(
       // 排除style,script标签,可以忽略
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
-        process.env.NODE_ENV !== 'production' && warn(
-          'Templates should only be responsible for mapping the state to the ' +
-          'UI. Avoid placing tags with side-effects in your templates, such as ' +
-          `<${tag}>` + ', as they will not be parsed.',
-          { start: element.start },
-        );
       }
       // apply pre-transforms
       // todo 这个preTransforms的目的是干什么

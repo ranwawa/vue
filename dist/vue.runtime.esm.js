@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.11
- * (c) 2014-2019 Evan You
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 /*  */
@@ -5660,22 +5660,21 @@ function isUnknownElement (tag) {
 var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 
 /*  */
-
 /**
  * Query an element selector if it's not an element already.
  */
-function query (el) {
+function query(el) {
   if (typeof el === 'string') {
     var selected = document.querySelector(el);
     if (!selected) {
       process.env.NODE_ENV !== 'production' && warn(
         'Cannot find element: ' + el
       );
-      return document.createElement('div')
+      return document.createElement('div');
     }
-    return selected
+    return selected;
   } else {
-    return el
+    return el;
   }
 }
 
@@ -7019,7 +7018,7 @@ function updateDOMProps (oldVnode, vnode) {
       // skip the update if old and new VDOM state is the same.
       // `value` is handled separately because the DOM value may be temporarily
       // out of sync with VDOM state due to focus, composition and modifiers.
-      // This  #4521 by skipping the unnecesarry `checked` update.
+      // This  #4521 by skipping the unnecessary `checked` update.
       cur !== oldProps[key]
     ) {
       // some property updates can throw
