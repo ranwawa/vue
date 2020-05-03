@@ -204,6 +204,7 @@ export function extend(to: Object, _from: ?Object): Object {
   }
   return to;
 }
+
 /**
  * Merge an Array of Objects into a single Object.
  */

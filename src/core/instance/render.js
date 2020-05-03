@@ -50,6 +50,7 @@ export function initRender(vm: Component) {
       vm, '$listeners', options._parentListeners || emptyObject, null, true);
   }
 }
+
 export let currentRenderingInstance: Component | null = null;
 // for testing only
 export function setCurrentRenderingInstance(vm: Component) {

@@ -94,7 +94,6 @@ export function parse(
     }
   }
   function closeElement(element) {
-    // 只有有子节点时才生效
     trimEndingWhitespace(element);
     if (!inVPre && !element.processed) {
       element = processElement(element, options);
@@ -103,10 +102,20 @@ export function parse(
     if (!stack.length && element !== root) {
       // allow root elements with v-if, v-else-if and v-else
       if (root.if && (element.elseif || element.else)) {
+        if (process.env.NODE_ENV !== 'production') {
+          checkRootConstraints(element);
+        }
         addIfCondition(root, {
           exp: element.elseif,
           block: element,
         });
+      } else if (process.env.NODE_ENV !== 'production') {
+        warnOnce(
+          `Component template should contain exactly one root element. ` +
+          `If you are using v-if on multiple elements, ` +
+          `use v-else-if to chain them instead.`,
+          { start: element.start },
+        );
       }
     }
     if (currentParent && !element.forbidden) {
@@ -170,7 +179,6 @@ export function parse(
       );
     }
   }
-
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -185,30 +193,56 @@ export function parse(
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(
         tag);
+      // handle IE svg bug
+      /* istanbul ignore if */
+      if (isIE && ns === 'svg') {
+        attrs = guardIESVGBug(attrs);
+      }
       let element: ASTElement = createASTElement(tag, attrs, currentParent);
       if (ns) {
         element.ns = ns;
       }
-      // todo,为什么dev后,dist中的代码木有下面这一行if
       if (process.env.NODE_ENV !== 'production') {
-     }
-      // 排除style,script标签,可以忽略
+        if (options.outputSourceRange) {
+          element.start = start;
+          element.end = end;
+          element.rawAttrsMap = element.attrsList.reduce((cumulated, attr) => {
+            cumulated[attr.name] = attr;
+            return cumulated;
+          }, {});
+        }
+        attrs.forEach(attr => {
+          if (invalidAttributeRE.test(attr.name)) {
+            warn(
+              `Invalid dynamic argument expression: attribute names cannot contain ` +
+              `spaces, quotes, <, >, / or =.`,
+              {
+                start: attr.start + attr.name.indexOf(`[`),
+                end: attr.start + attr.name.length,
+              },
+            );
+          }
+        });
+      }
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
+        process.env.NODE_ENV !== 'production' && warn(
+          'Templates should only be responsible for mapping the state to the ' +
+          'UI. Avoid placing tags with side-effects in your templates, such as ' +
+          `<${tag}>` + ', as they will not be parsed.',
+          { start: element.start },
+        );
       }
       // apply pre-transforms
-      // todo 这个preTransforms的目的是干什么
       for (let i = 0; i < preTransforms.length; i++) {
         element = preTransforms[i](element, options) || element;
       }
-      // 判断是否有v-pre属性
       if (!inVPre) {
         processPre(element);
         if (element.pre) {
           inVPre = true;
         }
       }
-      // 是否是pre标签
       if (platformIsPreTag(element.tag)) {
         inPre = true;
       }
@@ -334,7 +368,6 @@ export function parse(
   return root;
 }
 function processPre(el) {
-  // https://cn.vuejs.org/v2/api/#v-pre
   if (getAndRemoveAttr(el, 'v-pre') != null) {
     el.pre = true;
   }
@@ -375,14 +408,12 @@ export function processElement(
   processSlotContent(element);
   processSlotOutlet(element);
   processComponent(element);
-  // 处理静态和动态class|style
   for (let i = 0; i < transforms.length; i++) {
     element = transforms[i](element, options) || element;
   }
   processAttrs(element);
   return element;
 }
-
 function processKey(el) {
   const exp = getBindingAttr(el, 'key');
   if (exp) {
@@ -815,7 +846,6 @@ function processAttrs(el) {
     }
   }
 }
-
 function checkInFor(el: ASTElement): boolean {
   let parent = el;
   while (parent) {

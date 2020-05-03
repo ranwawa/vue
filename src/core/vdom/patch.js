@@ -25,7 +25,6 @@ import {
   isRegExp,
   isPrimitive,
 } from '../util/index';
-import { debug } from 'webpack';
 
 export const emptyNode = new VNode('', {}, []);
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy'];
@@ -352,6 +351,7 @@ export function createPatchFunction(backend) {
       removeNode(vnode.elm);
     }
   }
+
   function updateChildren(parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
     let oldStartIdx = 0;
     let newStartIdx = 0;
