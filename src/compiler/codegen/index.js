@@ -559,6 +559,7 @@ function genComponent(
   })`;
 }
 function genProps(props: Array<ASTAttr>): string {
+  debugger;
   let staticProps = ``;
   let dynamicProps = ``;
   for (let i = 0; i < props.length; i++) {

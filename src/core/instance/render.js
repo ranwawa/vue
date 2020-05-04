@@ -44,7 +44,7 @@ export function initRender(vm: Component) {
         !isUpdatingChildComponent && warn(`$listeners is readonly.`, vm);
       }, true);
   } else {
-    defineReactive(
+    (
       vm, '$attrs', parentData && parentData.attrs || emptyObject, null, true);
     defineReactive(
       vm, '$listeners', options._parentListeners || emptyObject, null, true);
@@ -63,6 +63,7 @@ export function renderMixin(Vue: Class<Component>) {
     return nextTick(fn, this);
   };
   Vue.prototype._render = function (): VNode {
+    debugger;
     const vm: Component = this;
     const { render, _parentVnode } = vm.$options;
     if (_parentVnode) {
@@ -82,7 +83,6 @@ export function renderMixin(Vue: Class<Component>) {
       // separately from one another. Nested component's render fns are called
       // when parent component is patched.
       currentRenderingInstance = vm;
-      debugger;
       vnode = render.call(vm._renderProxy, vm.$createElement);
     } catch (e) {
       handleError(e, vm, `render`);

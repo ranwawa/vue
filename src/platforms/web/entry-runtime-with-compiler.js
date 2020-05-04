@@ -19,6 +19,7 @@ Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean,
 ): Component {
+  debugger;
   el = el && query(el);
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
@@ -66,7 +67,6 @@ Vue.prototype.$mount = function (
         delimiters: options.delimiters,
         comments: options.comments,
       }, this);
-      debugger;
       options.render = render;
       options.staticRenderFns = staticRenderFns;
       /* istanbul ignore if */

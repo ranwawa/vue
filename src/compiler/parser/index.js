@@ -189,6 +189,7 @@ export function parse(
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
     start(tag, attrs, unary, start, end) {
+      debugger;
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(
@@ -708,6 +709,7 @@ function processComponent(el) {
   }
 }
 function processAttrs(el) {
+  debugger;
   const list = el.attrsList;
   let i, l, name, rawName, value, modifiers, syncGen, isDynamic;
   for (i = 0, l = list.length; i < l; i++) {
