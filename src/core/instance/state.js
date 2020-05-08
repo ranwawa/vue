@@ -42,6 +42,7 @@ export function proxy(target: Object, sourceKey: string, key: string) {
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 export function initState(vm: Component) {
+  debugger;
   vm._watchers = [];
   const opts = vm.$options;
   if (opts.props) {
@@ -110,6 +111,7 @@ function initProps(vm: Component, propsOptions: Object) {
   toggleObserving(true);
 }
 function initData(vm: Component) {
+  debugger;
   let data = vm.$options.data;
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)

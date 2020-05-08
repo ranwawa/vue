@@ -56,6 +56,7 @@ export function genHandlers (
   events: ASTElementHandlers,
   isNative: boolean
 ): string {
+  debugger;
   const prefix = isNative ? 'nativeOn:' : 'on:'
   let staticHandlers = ``
   let dynamicHandlers = ``

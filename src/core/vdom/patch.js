@@ -246,6 +246,7 @@ export function createPatchFunction(backend) {
     return isDef(vnode.tag);
   }
   function invokeCreateHooks(vnode, insertedVnodeQueue) {
+    debugger;
     for (let i = 0; i < cbs.create.length; ++i) {
       cbs.create[i](emptyNode, vnode);
     }
